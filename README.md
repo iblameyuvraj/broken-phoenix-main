@@ -15,6 +15,7 @@ The READMEs are correct. The code and the configuration are not.
 
 ---
 
+
 ## 1. Your MongoDB (Atlas)
 
 1. Create a free cluster on **MongoDB Atlas**.
