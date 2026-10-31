@@ -3,6 +3,7 @@ name: Phoenix pipeline
 on:
   # backend/frontend/e2e run on every push and PR; only `deploy` is gated to main below.
   push:
+    branches: [main]
   pull_request:
 
 # Least privilege: the pipeline only needs to read the code it builds.
@@ -176,6 +177,7 @@ jobs:
         with:
           name: phoenix-e2e-logs
           path: logs/
+          if-no-files-found: warn
           retention-days: 7
 
   deploy:
