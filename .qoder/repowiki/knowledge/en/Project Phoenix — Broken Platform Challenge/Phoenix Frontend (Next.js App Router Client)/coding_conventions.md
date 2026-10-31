@@ -1,0 +1,3 @@
+- Route pages under `src/app/**/page.tsx` are client components that compose layout from `components/` and call APIs through `lib/api.ts`.
+- Shared state and cross-cutting concerns (auth session, API client, types) live in `src/lib/` and are imported by both routes and UI components.
+- TypeScript types for API payloads and entities are defined once in `lib/types.ts` and reused across components and route handlers.

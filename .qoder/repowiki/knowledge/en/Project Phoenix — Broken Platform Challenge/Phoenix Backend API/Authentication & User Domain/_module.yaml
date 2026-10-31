@@ -1,0 +1,11 @@
+schema_version: 1
+module_path: phoenix_backend/auth_domain
+title: Authentication & User Domain
+scope:
+    - phoenix-backend/src/routes/auth.ts
+    - phoenix-backend/src/models/user.ts
+    - phoenix-backend/src/lib/auth.ts
+source_files: []
+depends_on: []
+related_to:
+    - path: phoenix_frontend/client_libs

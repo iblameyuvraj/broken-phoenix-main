@@ -1,0 +1,1 @@
+Task creation reads `TASK_CREDIT_COST` from `../config` settings and rejects requests when the workspace balance is negative (HTTP 402).

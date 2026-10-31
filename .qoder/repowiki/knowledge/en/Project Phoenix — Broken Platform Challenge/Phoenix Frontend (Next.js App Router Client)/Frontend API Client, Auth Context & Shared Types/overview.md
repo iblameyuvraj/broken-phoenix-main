@@ -1,0 +1,1 @@
+Shared client-side library providing a typed fetch wrapper with optional GET caching, a React auth context for session management, and shared TypeScript types consumed by Phoenix frontend pages.

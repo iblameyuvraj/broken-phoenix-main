@@ -1,0 +1,1 @@
+Next.js 14 App Router with React 18, TypeScript 5.6, date-fns for formatting, deployed via Vercel (`vercel.json`).

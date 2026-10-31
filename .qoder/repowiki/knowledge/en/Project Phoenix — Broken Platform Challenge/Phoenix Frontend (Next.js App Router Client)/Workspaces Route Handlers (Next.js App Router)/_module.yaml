@@ -1,0 +1,10 @@
+schema_version: 1
+module_path: phoenix_frontend/routes_workspaces
+title: Workspaces Route Handlers (Next.js App Router)
+scope:
+    - phoenix-frontend/src/app/workspaces/
+source_files: []
+depends_on: []
+related_to:
+    - path: phoenix_backend/api_entry_runtime
+    - path: phoenix_backend/projects_tasks_domain

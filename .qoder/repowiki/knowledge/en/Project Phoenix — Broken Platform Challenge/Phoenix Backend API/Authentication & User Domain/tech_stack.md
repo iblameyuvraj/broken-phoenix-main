@@ -1,0 +1,1 @@
+Express Router + Mongoose schemas; JWT access tokens issued/decoded through `../lib/security` (not inline here); bcrypt-style hashing via `hashPassword`/`verifyPassword` from `../lib/security`.

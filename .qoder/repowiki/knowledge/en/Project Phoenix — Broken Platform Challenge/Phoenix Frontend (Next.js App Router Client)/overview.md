@@ -1,0 +1,1 @@
+Next.js client application that renders Phoenix workspaces and projects, wiring shared UI shells, typed API calls, and auth context into App Router pages.

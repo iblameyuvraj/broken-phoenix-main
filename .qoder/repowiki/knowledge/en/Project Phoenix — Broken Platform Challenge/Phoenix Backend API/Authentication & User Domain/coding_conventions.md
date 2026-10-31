@@ -1,0 +1,4 @@
+- Route handlers are wrapped with `asyncHandler` from `../lib/http` so async errors propagate as HTTP responses rather than uncaught rejections.
+- Input bodies are validated against Zod-like schemas (`RegisterIn`, `LoginIn`) via `parseBody` before any business logic runs.
+- Unauthorized or forbidden conditions are raised as `HttpError(status, message)` instances thrown from handlers/middleware instead of returning error responses directly.
+- Authenticated user context flows through Express `res.locals.user`, populated by the `requireUser` middleware and read via `currentUser(res.locals)`.

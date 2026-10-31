@@ -1,0 +1,9 @@
+schema_version: 1
+module_path: phoenix_frontend
+title: Phoenix Frontend (Next.js App Router Client)
+scope:
+    - phoenix-frontend/
+source_files: []
+depends_on: []
+related_to:
+    - path: phoenix_ci

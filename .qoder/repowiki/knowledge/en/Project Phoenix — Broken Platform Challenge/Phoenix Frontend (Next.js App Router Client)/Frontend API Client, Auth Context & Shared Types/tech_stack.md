@@ -1,0 +1,1 @@
+Next.js client components (`"use client"` directive) with React Context for auth; native `fetch` for HTTP; environment variable `NEXT_PUBLIC_BACKEND_URL` defaults to `http://localhost:8000`.

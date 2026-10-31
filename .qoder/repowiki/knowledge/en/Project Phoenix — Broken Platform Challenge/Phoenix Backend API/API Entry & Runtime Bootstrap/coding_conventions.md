@@ -1,0 +1,3 @@
+- Configuration is validated at import time via a single Zod schema and cached after first parse so subsequent `getSettings()` calls return the same object.
+- Long-lived resources (DB connection, parsed settings) are exposed as module-level singletons with explicit connect/disconnect functions rather than per-request construction.
+- Process shutdown is handled by installing `SIGTERM` and `SIGINT` listeners that perform graceful teardown (close server → disconnect DB → exit).

@@ -1,0 +1,1 @@
+A multi-repo challenge where participants fix a broken multi-tenant project tracker composed of an Express backend, Next.js frontend, and GitHub Actions CI pipeline.

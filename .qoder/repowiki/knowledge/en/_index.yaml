@@ -1,0 +1,125 @@
+# 知识卡导出索引文件
+schema_version: 1
+locale: en-US
+branch: Q0DeR-MaG1C-BrAnCh-Fo2-NoN-GiT-Or-No-C0MmIt
+nodes_managed: true
+exported_at: "2026-10-31T06:05:44Z"
+modules:
+    "":
+        dir_name: Project Phoenix — Broken Platform Challenge
+        title: Project Phoenix — Broken Platform Challenge
+        scope:
+            - README.md
+        source_files: []
+        children:
+            - phoenix_backend
+            - phoenix_ci
+            - phoenix_frontend
+        depends_on: []
+        related_to: []
+    phoenix_backend:
+        dir_name: Phoenix Backend API
+        title: Phoenix Backend API
+        scope:
+            - phoenix-backend/
+        source_files: []
+        children:
+            - phoenix_backend/api_entry_runtime
+            - phoenix_backend/auth_domain
+            - phoenix_backend/projects_tasks_domain
+        depends_on: []
+        related_to:
+            - path: phoenix_ci
+    phoenix_backend/api_entry_runtime:
+        dir_name: API Entry & Runtime Bootstrap
+        title: API Entry & Runtime Bootstrap
+        scope:
+            - phoenix-backend/src/app.ts
+            - phoenix-backend/src/server.ts
+            - phoenix-backend/src/config.ts
+            - phoenix-backend/src/db.ts
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: phoenix_frontend/routes_workspaces
+    phoenix_backend/auth_domain:
+        dir_name: Authentication & User Domain
+        title: Authentication & User Domain
+        scope:
+            - phoenix-backend/src/routes/auth.ts
+            - phoenix-backend/src/models/user.ts
+            - phoenix-backend/src/lib/auth.ts
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: phoenix_frontend/client_libs
+    phoenix_backend/projects_tasks_domain:
+        dir_name: Projects & Tasks Domain (Workspace-Scoped Resources)
+        title: Projects & Tasks Domain (Workspace-Scoped Resources)
+        scope:
+            - phoenix-backend/src/routes/projects.ts
+            - phoenix-backend/src/routes/tasks.ts
+            - phoenix-backend/src/models/project.ts
+            - phoenix-backend/src/models/task.ts
+            - phoenix-backend/src/models/ledger.ts
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: phoenix_frontend/routes_workspaces
+    phoenix_ci:
+        dir_name: Phoenix CI_CD Pipeline & Smoke Tests
+        title: Phoenix CI/CD Pipeline & Smoke Tests
+        scope:
+            - phoenix-ci/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: phoenix_backend
+            - path: phoenix_frontend
+    phoenix_frontend:
+        dir_name: Phoenix Frontend (Next.js App Router Client)
+        title: Phoenix Frontend (Next.js App Router Client)
+        scope:
+            - phoenix-frontend/
+        source_files: []
+        children:
+            - phoenix_frontend/client_libs
+            - phoenix_frontend/routes_workspaces
+            - phoenix_frontend/shared_ui
+        depends_on: []
+        related_to:
+            - path: phoenix_ci
+    phoenix_frontend/client_libs:
+        dir_name: Frontend API Client, Auth Context & Shared Types
+        title: Frontend API Client, Auth Context & Shared Types
+        scope:
+            - phoenix-frontend/src/lib/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: phoenix_backend/auth_domain
+    phoenix_frontend/routes_workspaces:
+        dir_name: Workspaces Route Handlers (Next.js App Router)
+        title: Workspaces Route Handlers (Next.js App Router)
+        scope:
+            - phoenix-frontend/src/app/workspaces/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to:
+            - path: phoenix_backend/api_entry_runtime
+            - path: phoenix_backend/projects_tasks_domain
+    phoenix_frontend/shared_ui:
+        dir_name: Shared Layout & Shell Components
+        title: Shared Layout & Shell Components
+        scope:
+            - phoenix-frontend/src/components/
+        source_files: []
+        children: []
+        depends_on: []
+        related_to: []

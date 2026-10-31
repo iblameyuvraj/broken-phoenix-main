@@ -1,0 +1,1 @@
+Bootstraps the Phoenix Express API: validates environment config, connects to MongoDB, wires route middleware, and manages process lifecycle.

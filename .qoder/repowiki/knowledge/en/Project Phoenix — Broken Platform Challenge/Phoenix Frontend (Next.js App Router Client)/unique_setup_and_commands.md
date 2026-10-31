@@ -1,0 +1,1 @@
+`npm run dev` starts the Next.js dev server on port 3000; `npm run build` / `npm start` produce and serve the production bundle; `npm run typecheck` runs `tsc --noEmit`. CI is driven by `.github/workflows/ci.yml`.

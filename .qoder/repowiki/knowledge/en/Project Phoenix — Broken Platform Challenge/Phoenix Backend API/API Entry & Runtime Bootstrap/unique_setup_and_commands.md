@@ -1,0 +1,1 @@
+The server binds exclusively to `127.0.0.1` (not `0.0.0.0`), so external access requires a reverse proxy or port-forward; startup fails fast if any required env var (e.g. `MONGO_URL`, `JWT_SECRET` ≥ 32 chars) does not match its Zod schema.

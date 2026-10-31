@@ -1,0 +1,1 @@
+Node.js 20 across all children; Express + Mongoose for the backend, Next.js 14 + React 18 for the frontend, MongoDB Atlas as the shared datastore, and GitHub Actions driving the CI pipeline.

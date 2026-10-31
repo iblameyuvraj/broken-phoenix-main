@@ -1,0 +1,12 @@
+schema_version: 1
+module_path: phoenix_backend/api_entry_runtime
+title: API Entry & Runtime Bootstrap
+scope:
+    - phoenix-backend/src/app.ts
+    - phoenix-backend/src/server.ts
+    - phoenix-backend/src/config.ts
+    - phoenix-backend/src/db.ts
+source_files: []
+depends_on: []
+related_to:
+    - path: phoenix_frontend/routes_workspaces

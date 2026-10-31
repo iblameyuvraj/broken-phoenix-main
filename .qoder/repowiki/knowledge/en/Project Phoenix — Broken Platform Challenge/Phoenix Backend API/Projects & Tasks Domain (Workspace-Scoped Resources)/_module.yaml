@@ -1,0 +1,13 @@
+schema_version: 1
+module_path: phoenix_backend/projects_tasks_domain
+title: Projects & Tasks Domain (Workspace-Scoped Resources)
+scope:
+    - phoenix-backend/src/routes/projects.ts
+    - phoenix-backend/src/routes/tasks.ts
+    - phoenix-backend/src/models/project.ts
+    - phoenix-backend/src/models/task.ts
+    - phoenix-backend/src/models/ledger.ts
+source_files: []
+depends_on: []
+related_to:
+    - path: phoenix_frontend/routes_workspaces

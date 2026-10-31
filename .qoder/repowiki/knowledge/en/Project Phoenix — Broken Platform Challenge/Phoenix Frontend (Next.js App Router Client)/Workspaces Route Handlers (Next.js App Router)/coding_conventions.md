@@ -1,0 +1,4 @@
+- Each route segment exports a default page component that wraps its content in `<RequireAuth>` before rendering the actual data-bearing component.
+- Data fetching is performed inside a `useCallback`-wrapped async function invoked from `useEffect(() => load(), [load])`, with loading/error states rendered as `<p className="muted">Loading…</p>` or `<p className="error">…</p>`.
+- Mutations are implemented as `FormEvent` handlers that call `api()` with `{ method: "POST", body: … }`, then re-run `load()` on success and surface errors via `describeError(err)`.
+- Parallel resource loads use `Promise.all([ api(...), api(...) ])` to fetch related data (workspace + projects/members/credits) in a single render pass.

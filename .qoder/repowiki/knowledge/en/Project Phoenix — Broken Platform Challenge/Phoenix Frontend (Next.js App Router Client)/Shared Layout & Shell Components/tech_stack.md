@@ -1,0 +1,1 @@
+Next.js App Router (React Server Components + `"use client"`), `next/navigation` for routing, `react-dom`'s `createPortal` for the modal overlay.

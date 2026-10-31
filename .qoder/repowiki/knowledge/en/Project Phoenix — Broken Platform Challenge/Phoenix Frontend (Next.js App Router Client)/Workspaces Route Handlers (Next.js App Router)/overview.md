@@ -1,0 +1,1 @@
+Next.js App Router client pages that let users list, create, and manage workspaces — including projects, credits top-ups, and member invitations.

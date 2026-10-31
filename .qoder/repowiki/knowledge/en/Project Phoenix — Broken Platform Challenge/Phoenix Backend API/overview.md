@@ -1,0 +1,1 @@
+Express + Mongoose backend that wires auth, workspace-scoped projects/tasks, and health routes behind a shared middleware stack for CORS, JSON parsing, and error handling.

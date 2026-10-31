@@ -1,0 +1,4 @@
+- Every component file begins with the `"use client"` directive to opt into client-side rendering.
+- Authentication state is accessed through the shared `useAuth` hook from `@/lib/auth` instead of being passed as props.
+- Navigation uses Next.js `Link` components with Tailwind-style class names (e.g. `nav`, `sidebar`, `side-link`, `muted`) rather than CSS modules.
+- User-facing UI elements include `aria-*` attributes (e.g. `aria-label`, `role="dialog"`, `aria-modal`) for accessibility.

@@ -1,0 +1,1 @@
+Express route handlers and Mongoose model for user registration, login, token issuance, and bearer-token-based request authorization.

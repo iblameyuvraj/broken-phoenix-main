@@ -1,0 +1,1 @@
+`npm run dev` boots the TSX watcher on `src/server.ts`; `npm run seed` / `seed:reset` populate MongoDB via `scripts/seed.ts`; `npm test` runs Vitest against the smoke suite configured in `vitest.config.ts` with `tests/global-setup.ts` managing the DB lifecycle.

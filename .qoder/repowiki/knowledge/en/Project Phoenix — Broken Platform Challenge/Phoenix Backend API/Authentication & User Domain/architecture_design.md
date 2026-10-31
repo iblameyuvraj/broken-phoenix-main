@@ -1,0 +1,6 @@
+Three-layer split within the module:
+- `src/routes/auth.ts` defines an Express `Router` (`authRouter`) exposing `/api/auth/register`, `/api/auth/login`, and `/api/auth/me`. It is a thin HTTP layer that validates input via `parseBody` from `../lib/schemas`, delegates persistence to `User` (from `../models`), hashes/verifies passwords and issues tokens via `createAccessToken`/`hashPassword`/`verifyPassword` from `../lib/security`, and serializes responses with `userOut` from `../lib/serialize`.
+- `src/lib/auth.ts` provides reusable middleware and helpers: `requireUser` parses the `Authorization: Bearer <token>` header, decodes it via `decodeAccessToken`, looks up the user by `_id`, attaches it to `res.locals.user`, and exposes `currentUser(locals)` plus workspace/project scoping helpers (`requireMember`, `requireAdmin`, `getProjectForUser`) that gate access by role.
+- `src/models/user.ts` declares the Mongoose `userSchema` (email unique+lowercase+trimmed, fullName, passwordHash) and exports the `User` model plus the `UserDoc` inferred type.
+
+Dependency direction is one-way: routes depend on lib/auth and models; lib/auth depends on models and security; models have no intra-module dependencies. Authorization decisions are centralized in `lib/auth.ts` so route handlers stay focused on I/O.

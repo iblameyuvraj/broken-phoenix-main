@@ -1,0 +1,4 @@
+- Routers are mounted in a fixed order in `createApp`, with health checks first and resource routers after auth so bearer-token middleware can run before protected handlers.
+- Shared configuration is read through `getSettings()` from `src/config.ts` rather than direct `process.env` access, ensuring env validation at startup.
+- Request/response payloads are validated with Zod schemas defined in `src/lib/schemas.ts` and serialized via `src/lib/serialize.ts` instead of ad-hoc objects.
+- Domain state lives in Mongoose models under `src/models/<resource>.ts` and is accessed only through route handlers, never directly from other routes.

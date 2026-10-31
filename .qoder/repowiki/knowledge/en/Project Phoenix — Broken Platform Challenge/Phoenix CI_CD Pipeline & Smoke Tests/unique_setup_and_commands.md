@@ -1,0 +1,1 @@
+Smoke test can be run locally against any stack: `./scripts/smoke.sh http://localhost:8000 http://localhost:3000` or against production with an expected version argument; it exits non-zero on any failure and prints `SMOKE OK` on success.

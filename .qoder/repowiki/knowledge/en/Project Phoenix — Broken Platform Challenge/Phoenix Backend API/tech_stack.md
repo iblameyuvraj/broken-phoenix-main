@@ -1,0 +1,1 @@
+Node.js ≥18.17 (ESM) with TypeScript compiled via `tsc`; runtime uses Express 5, Mongoose 8, Zod for validation, jsonwebtoken for bearer tokens, cors for cross-origin requests; testing via Vitest + Supertest; dev server via `tsx watch`.

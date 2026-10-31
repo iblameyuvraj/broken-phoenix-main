@@ -1,0 +1,237 @@
+name: Phoenix pipeline
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Least privilege: the pipeline only needs to read the code it builds.
+permissions:
+  contents: read
+
+concurrency:
+  group: phoenix-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+  MONGO_IMAGE: mongo:7
+
+jobs:
+  backend:
+    name: Backend CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      MONGODB_URI: mongodb://localhost:27017/phoenix_test
+      JWT_SECRET: ci-only-secret-that-is-at-least-32-chars
+    steps:
+      - name: Checkout phoenix-backend
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/phoenix-backend
+          path: phoenix-backend
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: phoenix-backend/package-lock.json
+
+      - name: Install
+        working-directory: phoenix-backend
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: phoenix-backend
+        run: npm run typecheck
+
+      - name: Build
+        working-directory: phoenix-backend
+        run: npm run build
+
+      - name: Test
+        working-directory: phoenix-backend
+        run: npm test
+
+  frontend:
+    name: Frontend CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    steps:
+      - name: Checkout phoenix-frontend
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/phoenix-frontend
+          path: phoenix-frontend
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: phoenix-frontend/package-lock.json
+
+      - name: Install
+        working-directory: phoenix-frontend
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: phoenix-frontend
+        run: npm run typecheck
+
+      - name: Build
+        working-directory: phoenix-frontend
+        run: npm run build
+
+  e2e:
+    name: End-to-end smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: [backend, frontend]
+    services:
+      mongo:
+        image: mongo:7
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.runCommand({ ping: 1 }).ok'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      MONGODB_URI: mongodb://localhost:27017/phoenix_e2e
+      JWT_SECRET: ci-only-secret-that-is-at-least-32-chars
+      APP_VERSION: ${{ github.sha }}
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+    steps:
+      - name: Checkout phoenix-backend
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/phoenix-backend
+          path: phoenix-backend
+
+      - name: Checkout phoenix-frontend
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/phoenix-frontend
+          path: phoenix-frontend
+
+      - name: Checkout phoenix-ci
+        uses: actions/checkout@v4
+        with:
+          path: phoenix-ci
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            phoenix-backend/package-lock.json
+            phoenix-frontend/package-lock.json
+
+      - name: Build backend and seed demo data
+        working-directory: phoenix-backend
+        run: |
+          npm ci
+          npm run build
+          npm run seed
+
+      - name: Build frontend
+        working-directory: phoenix-frontend
+        run: |
+          npm ci
+          npm run build
+
+      - name: Start the stack in the background
+        run: |
+          mkdir -p logs
+          (cd phoenix-backend && nohup npm start > ../logs/backend.log 2>&1 &)
+          (cd phoenix-frontend && nohup npm start > ../logs/frontend.log 2>&1 &)
+
+      - name: Wait for the apps
+        run: |
+          bash phoenix-ci/scripts/wait-for.sh http://localhost:8000/api/health 90
+          bash phoenix-ci/scripts/wait-for.sh http://localhost:3000/ 90
+
+      - name: Smoke test
+        run: bash phoenix-ci/scripts/smoke.sh http://localhost:8000 http://localhost:3000
+
+      - name: Upload logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phoenix-e2e-logs
+          path: logs/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  deploy:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: e2e
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    environment: production
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+    steps:
+      - name: Checkout phoenix-backend
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/phoenix-backend
+          path: phoenix-backend
+
+      - name: Checkout phoenix-frontend
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/phoenix-frontend
+          path: phoenix-frontend
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install a pinned Vercel CLI
+        run: npm install --global vercel@39.1.0
+
+      - name: Deploy backend
+        working-directory: phoenix-backend
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
+        run: vercel deploy --prod --yes --env APP_VERSION=${{ github.sha }}
+
+      - name: Deploy frontend
+        working-directory: phoenix-frontend
+        env:
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_FRONTEND_PROJECT_ID }}
+          NEXT_PUBLIC_API_URL: ${{ vars.BACKEND_URL }}
+        run: vercel deploy --prod --yes
+
+  verify:
+    name: Verify production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: deploy
+    steps:
+      - name: Checkout phoenix-ci
+        uses: actions/checkout@v4
+
+      - name: Smoke test production
+        run: bash scripts/smoke.sh "${{ vars.BACKEND_URL }}" "${{ vars.FRONTEND_URL }}" "${{ github.sha }}"

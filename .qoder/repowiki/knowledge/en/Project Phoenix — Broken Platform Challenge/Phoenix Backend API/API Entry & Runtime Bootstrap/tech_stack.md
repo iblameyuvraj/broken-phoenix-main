@@ -1,0 +1,1 @@
+Express + Zod for runtime env validation (with `corsOriginList` derived from a JSON array in `CORS_ORIGINS`), Mongoose for MongoDB access with `strictQuery` and `autoIndex` disabled, JWT configured via HS256/HS384/HS512 algorithms.

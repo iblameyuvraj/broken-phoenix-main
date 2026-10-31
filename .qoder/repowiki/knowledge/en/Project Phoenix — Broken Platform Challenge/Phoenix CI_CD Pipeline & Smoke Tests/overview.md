@@ -1,0 +1,1 @@
+GitHub Actions workflow and smoke-test script that build, test, deploy to Vercel, and verify the Phoenix backend and frontend apps.

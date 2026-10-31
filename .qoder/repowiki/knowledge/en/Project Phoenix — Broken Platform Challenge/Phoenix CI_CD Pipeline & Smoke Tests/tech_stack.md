@@ -1,0 +1,1 @@
+GitHub Actions YAML pipeline, Node 16 via `actions/setup-node`, MongoDB service container for tests, Vercel CLI (`vercel deploy --prod`) for deployment, and a bare `curl`-based bash smoke test.

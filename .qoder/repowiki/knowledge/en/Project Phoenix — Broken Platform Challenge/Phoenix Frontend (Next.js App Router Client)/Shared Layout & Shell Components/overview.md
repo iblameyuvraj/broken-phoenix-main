@@ -1,0 +1,1 @@
+Reusable Next.js client components that compose the app shell: navigation bar, workspace sidebar, an auth-gate wrapper, and a portal-based info modal.

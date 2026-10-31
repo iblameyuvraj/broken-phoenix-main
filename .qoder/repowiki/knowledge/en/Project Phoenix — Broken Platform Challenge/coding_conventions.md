@@ -1,0 +1,2 @@
+- Each child repository ships its own README describing expected behavior; the root README is the single source of truth for cross-repo setup and grading.
+- Fixes are constrained to existing frameworks and databases — no rewriting or framework switching is allowed, and every dependency change must be justified in `REPORT.md`.

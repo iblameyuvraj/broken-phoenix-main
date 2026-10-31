@@ -1,0 +1,4 @@
+- API calls go exclusively through the typed `api<T>(path, opts)` helper rather than direct `fetch` calls, so error handling, Authorization headers, and optional GET caching are centralized.
+- Errors thrown from the API surface are wrapped in the domain `ApiError` class carrying an HTTP `status`, and user-facing messages are produced via `describeError` rather than raw exception text.
+- Shared data contracts between frontend and backend live in `types.ts` as plain TypeScript interfaces (e.g. `User`, `TokenResponse`, `Workspace`) and are imported wherever they are used.
+- Authentication state is exposed through a React Context provider (`AuthProvider`) with a `useAuth` hook that throws if called outside the provider, instead of ad-hoc localStorage reads in components.

@@ -1,0 +1,1 @@
+Next.js App Router with React Server Components as shell and Client Components for interactivity; typed API calls via a local `@/lib/api` wrapper against Phoenix REST endpoints.

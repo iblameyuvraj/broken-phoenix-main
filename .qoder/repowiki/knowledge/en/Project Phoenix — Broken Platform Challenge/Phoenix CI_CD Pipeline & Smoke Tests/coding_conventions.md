@@ -1,0 +1,2 @@
+- The README documents the required job matrix and security rules (pinned actions, least-privilege permissions, timeouts, lockfile-keyed caches) as the single source of truth for what the pipeline must implement.
+- External services (MongoDB, Vercel) are accessed through GitHub secrets rather than inline credentials, and the workflow references them via `${{ secrets.* }}` expressions.

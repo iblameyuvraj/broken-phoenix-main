@@ -1,0 +1,5 @@
+- Route handlers are wrapped in `asyncHandler` and extract typed input via `parseBody` / `parseId` from `../lib/http` rather than reading `req.body` directly.
+- Authorization is layered through `requireUser` followed by either `requireMember(workspaceId)` or `getProjectForUser(projectId, user)` before any write.
+- Response objects are produced through `projectOut` / `taskOut` serializers from `../lib/serialize` instead of returning raw Mongoose documents.
+- Mongoose models export the compiled model instance directly and declare indexes via `schema.index(...)` calls after schema construction.
+- Write paths that mutate state invalidate or update related caches/ledgers immediately after persistence (e.g., `cacheDelete` for project lists, `CreditLedger.create` for task charges).

@@ -1,0 +1,6 @@
+Four cohesive files form a thin client layer over the backend REST API:
+- `api.ts` is the HTTP entry point: it reads a bearer token from `localStorage`, wraps `fetch` against `NEXT_PUBLIC_BACKEND_URL`, throws a domain `ApiError` (with status codes 0/401/402/403/404/5xx mapped to user-facing messages via `describeError`), and optionally caches GET responses through `cache.ts`.
+- `cache.ts` exposes an in-memory `Map`-backed cache (`getCached`/`setCached`/`clearCache`) keyed by request path; comments indicate keys include the auth token so caches are invalidated on login/logout/write.
+- `auth.tsx` is a React Server Component boundary marked `"use client"`; it provides `AuthProvider` + `useAuth` hook that restores a session on mount by calling `/api/auth/me`, persists tokens via `api.setToken`, and listens for a `phoenix:logout` custom event to clear local state.
+- `types.ts` centralizes all shared DTOs (`User`, `TokenResponse`, `Workspace`, `Member`, `Project`, `Task`, `TaskPage`, plus enums `Role`, `TaskStatus`).
+Dependency direction is one-way: `auth.tsx` → `api.ts` → `cache.ts`; `types.ts` is imported by both. The module has no UI components of its own — it is purely a library consumed by page routes.
