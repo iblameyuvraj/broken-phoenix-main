@@ -1,8 +1,8 @@
 name: Phoenix pipeline
 
 on:
+  # backend/frontend/e2e run on every push and PR; only `deploy` is gated to main below.
   push:
-    branches: [main]
   pull_request:
 
 # Least privilege: the pipeline only needs to read the code it builds.
@@ -15,7 +15,6 @@ concurrency:
 
 env:
   NODE_VERSION: "20"
-  MONGO_IMAGE: mongo:7
 
 jobs:
   backend:
@@ -177,7 +176,6 @@ jobs:
         with:
           name: phoenix-e2e-logs
           path: logs/
-          if-no-files-found: ignore
           retention-days: 7
 
   deploy:
@@ -215,7 +213,9 @@ jobs:
         working-directory: phoenix-backend
         env:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_BACKEND_PROJECT_ID }}
-        run: vercel deploy --prod --yes --env APP_VERSION=${{ github.sha }}
+          APP_VERSION: ${{ github.sha }}
+        # The commit is passed through env, never interpolated into the command line.
+        run: vercel deploy --prod --yes --env APP_VERSION="$APP_VERSION"
 
       - name: Deploy frontend
         working-directory: phoenix-frontend
@@ -234,4 +234,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Smoke test production
-        run: bash scripts/smoke.sh "${{ vars.BACKEND_URL }}" "${{ vars.FRONTEND_URL }}" "${{ github.sha }}"
+        env:
+          BACKEND_URL: ${{ vars.BACKEND_URL }}
+          FRONTEND_URL: ${{ vars.FRONTEND_URL }}
+          EXPECTED_VERSION: ${{ github.sha }}
+        run: bash scripts/smoke.sh "$BACKEND_URL" "$FRONTEND_URL" "$EXPECTED_VERSION"

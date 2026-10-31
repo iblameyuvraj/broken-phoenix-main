@@ -5,6 +5,12 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export const TOKEN_KEY = "phoenix.token";
 
+/** Fired when the server rejects our token, so the auth provider can drop the user. */
+export const LOGOUT_EVENT = "phoenix:logout";
+
+// Answering "who am I" or "log me in" with 401 is an answer, not an expired session.
+const AUTH_ENDPOINTS = ["/api/auth/login", "/api/auth/register"];
+
 let token: string | null = null;
 let tokenLoaded = false;
 
@@ -82,6 +88,12 @@ export async function api<T>(path: string, opts: RequestOptions = {}): Promise<T
       detail = typeof body.detail === "string" ? body.detail : JSON.stringify(body.detail);
     } catch {
       /* non-JSON error body */
+    }
+    if (res.status === 401 && !AUTH_ENDPOINTS.some((endpoint) => path.startsWith(endpoint))) {
+      // The session is gone: clear it everywhere instead of leaving a stale token in
+      // localStorage and a logged-in-looking shell on screen.
+      setToken(null);
+      if (typeof window !== "undefined") window.dispatchEvent(new Event(LOGOUT_EVENT));
     }
     throw new ApiError(res.status, detail);
   }

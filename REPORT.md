@@ -106,6 +106,9 @@ people. It uses `requireAdmin` (owner/admin) as documented.
 **Top-ups were available to members.** Credits are money; the route now requires the owner
 (`requireOwner`).
 
+**Top-ups could also be booked against a workspace that was not there.** `findByIdAndUpdate` returning
+`null` still wrote a ledger row and answered `balance: 0`. It is a 404 now, before the ledger entry.
+
 ## 5. Money, idempotency and data correctness
 
 **Two people could spend the last coin.** The handler read the balance, compared it with `< 0`, and
@@ -146,7 +149,7 @@ did not await the database connection. It now awaits a cached connection and han
 Express, with the app built once per warm lambda.
 
 **The rewrite pointed at a missing function.** `vercel.json` sent every request to `/api/server`,
-but the function is `api/index.ts` (served at `/api`). Fixed.
+but the only serverless function in the repository is `api/index.ts`. Destination is now `/api/index`.
 
 ## 7. Frontend setup and build
 
@@ -195,6 +198,14 @@ page 1.
 list. Errors are now shown as errors, and "No tasks match." only appears for a genuinely empty,
 successful response.
 
+**An expired session that never actually ended.** The auth provider listened for a
+`phoenix:logout` window event that nothing ever dispatched, so a 401 in the middle of a session left
+a dead token in `localStorage` and a logged-in-looking shell on screen. `api()` now clears the token
+(which also clears the GET cache) and dispatches the event, so `RequireAuth` returns the user to the
+login page. Login and register are excluded from that rule, because a 401 there is an answer rather
+than an expired session — and the login form now shows the API's "Invalid email or password" instead
+of "Your session has expired".
+
 **Fast fingers created two tasks.** `setBusy(true)` happened *after* the `await`, so a second click
 got through. The guard is now set before the request, and each submission carries one
 `Idempotency-Key`, so even a retry cannot charge twice.
@@ -211,8 +222,10 @@ would reject them). It is now only rendered for owners/admins.
 `if: ${{ ... }`. YAML duplicate keys and syntax errors make GitHub refuse the whole file. Rewritten
 and validated with a YAML parser plus a duplicate-key check.
 
-**It only listened to a branch nobody pushes to.** `on.push.branches: [master]` → `main`, plus
-`pull_request`.
+**It only listened to a branch nobody pushes to.** `on.push.branches: [master]` never fires, because
+the project's branch is `main` — but gating the *whole* workflow to `main` would equally silence CI on
+every feature branch and pull request. The workflow now triggers on every push and every pull request,
+and only `deploy` is gated, with `if: github.event_name == 'push' && github.ref == 'refs/heads/main'`.
 
 **A pipeline that cannot fail.** `npm test || true`, `continue-on-error: true`, `--legacy-peer-deps`,
 `actions/checkout@master`, `actions/setup-node@main` and `permissions: write-all`. All replaced with
@@ -236,7 +249,9 @@ production and checks the live version equals `github.sha`.
 
 **A secret said out loud.** The deploy step echoed `${{ secrets.VERCEL_TOKEN }}` into the log.
 Removed — the Vercel CLI reads `VERCEL_TOKEN` from the environment — and the CLI is pinned
-(`vercel@39.1.0`) instead of floating.
+(`vercel@39.1.0`) instead of floating. The commit and the production URLs also reach commands through
+`env:`, never interpolated straight into a `run:` line, and the log-upload step no longer carries
+`if-no-files-found: ignore`, which is a step that can hide a failure.
 
 **A smoke detector without a battery.** `smoke.sh` used plain `curl` (which succeeds on 404/500),
 called `/health` instead of `/api/health`, printed "SMOKE OK" unconditionally and had no

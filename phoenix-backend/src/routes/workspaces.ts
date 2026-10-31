@@ -121,7 +121,8 @@ workspacesRouter.post(
     await requireOwner(id, user);
     const body = parseBody(TopUpIn, req.body);
     const ws = await Workspace.findByIdAndUpdate(id, { $inc: { credits: body.amount } }, { new: true }).lean();
+    if (!ws) throw new HttpError(404, "Workspace not found");
     await CreditLedger.create({ workspace: id, delta: body.amount, reason: "top-up" });
-    res.json({ workspace_id: String(id), balance: ws?.credits ?? 0 });
+    res.json({ workspace_id: String(id), balance: ws.credits });
   })
 );

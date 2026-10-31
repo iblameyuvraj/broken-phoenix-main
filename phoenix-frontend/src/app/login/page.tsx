@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
-import { describeError } from "@/lib/api";
+import { ApiError, describeError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 
 export default function LoginPage() {
@@ -21,7 +21,8 @@ export default function LoginPage() {
       await login(email, password);
       router.push("/workspaces");
     } catch (err) {
-      setError(describeError(err));
+      // A rejected login is bad credentials, not an expired session.
+      setError(err instanceof ApiError && err.status === 401 ? err.message : describeError(err));
     } finally {
       setBusy(false);
     }

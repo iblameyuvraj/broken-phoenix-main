@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import { api, getToken, setToken } from "./api";
+import { api, getToken, LOGOUT_EVENT, setToken } from "./api";
 import type { TokenResponse, User } from "./types";
 
 interface AuthState {
@@ -39,6 +39,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
     setToken(res.access_token);
     setUser(res.user);
+  }, []);
+
+  // A 401 from any call ends the session everywhere (see api.ts).
+  useEffect(() => {
+    const onLogout = () => {
+      setUser(null);
+      setReady(true);
+    };
+    window.addEventListener(LOGOUT_EVENT, onLogout);
+    return () => window.removeEventListener(LOGOUT_EVENT, onLogout);
   }, []);
 
   const logout = useCallback(() => {
